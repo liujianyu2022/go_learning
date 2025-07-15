@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"go_learning/basic/array_slice/tools"
+	"go_learning/01_basic/array_slice/tools"
 )
 
 // 数组定义		var 数组名 [数组长度]数据类型		var array [5]int	 长度也是数据类型的一部分   [3]int  [5]int 数据类型不同
