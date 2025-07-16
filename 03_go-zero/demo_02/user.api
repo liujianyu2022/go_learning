@@ -1,0 +1,30 @@
+syntax = "v1"
+
+type RegisterRequest {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type RegisterResponse {}
+
+type LoginRequest {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type LoginResponse {
+	Token string `json:"token"`
+}
+
+@server (
+	group:  account // 代表当前service的代码会放在account目录下
+	prefix: user // 路由前缀
+)
+service user-api {
+	@handler register
+	post /register (RegisterRequest) returns (RegisterResponse)
+
+	@handler login
+	post /login (LoginRequest) returns (LoginResponse)
+}
+

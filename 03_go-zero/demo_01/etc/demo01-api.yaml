@@ -1,0 +1,12 @@
+Name: demo_01-api
+Host: 0.0.0.0
+Port: 8888
+
+# 自定义的配置
+Gender: male      
+
+# 自定义的结构体
+# 注意：属性名不要设置为单个字母，设置为单个字母好像无法正确解析，可能是bug
+Point:
+  XValue: 100
+  YValue: 200
