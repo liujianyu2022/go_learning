@@ -1,3 +1,7 @@
 Name: user-api
 Host: 0.0.0.0
 Port: 8888
+
+MySQLConfig:
+  Datasource: "root:liujianyu@tcp(192.168.137.51:3306)/go_web_learning?charset=utf8mb4&parseTime=True&loc=Local"
+  ConnectTimeout: 10
