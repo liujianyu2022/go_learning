@@ -17,14 +17,15 @@ type LoginResponse {
 }
 
 @server (
-	group:  account // 代表当前service的代码会放在account目录下
-	prefix: user // 路由前缀
+	group:  account 							// 代表当前service的代码会放在account目录下
+	prefix: user 								// 路由前缀
 )
 service user-api {
-	@handler register
+	@handler register							// handler中的函数名称
 	post /register (RegisterRequest) returns (RegisterResponse)
 
 	@handler login
 	post /login (LoginRequest) returns (LoginResponse)
 }
 
+// goctl api go --api user.api --dir .          生成代码
