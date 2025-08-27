@@ -66,3 +66,78 @@ uint32 == 0
 
 锁竞争严重时，互斥锁进入饥饿模式。饥饿模式没有自旋等待，不会存在空转消耗性能的情况
 同时，从sema队列中取出的协程直接获取锁，有利于公平，防止出现某个协程一直获取不到锁的情况
+
+
+### 读写锁 sync.RWMutex
+
+
+#### 总结
+- 用 Mutex 实现写协程之间的互斥等待
+- 读协程使用readerSem等待写锁的释放，也就是说如果已经加了写锁，那么读协程就会被放到readerSem里面等待
+- 写协程使用writerSem等待读锁的释放，也就是说如果已经加了读锁，那么写协程就会被放到writerSem里面等待
+- readerCount记录读协程的个数
+- readerWait记录写协程前面的读协程的个数
+
+- 如果是读多写少的场景，使用 读写锁RWMutex 能提高性能
+- 如果是写多读少的场景，那么直接使用 互斥锁Mutex
+
+
+### WaitGroup
+
+![alt text](images/demo_03_01.png)
+![alt text](images/demo_03_02.png)
+1. counter（计数器）
+- 记录还有多少个任务没完成。
+- Add(n) 会增加，Done() 会减少。
+- 当 counter == 0 时，表示所有任务完成。
+
+2. waiter count（等待者个数）
+- 记录有多少个 goroutine 调用了 Wait()，也就是有多少个“等候的人”。
+- 如果有多个 goroutine 调用了 Wait()，当计数器归零时，它们都要被唤醒。
+
+3. sema（信号量）
+- 把等的人挂起，等 counter 归零时把他们叫醒。，也就是真正用来挂起/唤醒等待的 goroutine。
+
+```go
+func () test(waitGroup *sync.WaitGroup) {
+	waitGroup.Done()
+}
+
+func main() {
+
+	waitGroup := sync.WaitGroup{}
+
+	waitGroup.Add(3)
+	go test()
+    go test()
+    go test()
+
+	waitGroup.Wait()                    // main goroutine 就会被 阻塞，挂在 WaitGroup 内部的 sema 上，进入“等待模式”
+}
+```
+分析：
+当 main 执行到 waitGroup.Wait() 时，发现计数器（counter）还没归零（初始值 3）。
+这时候，main goroutine 就会被 阻塞，挂在 WaitGroup 内部的 sema 上，进入“等待模式”。
+等到 3 个 Done() 调用完毕，counter 变成 0，runtime 就会通过 runtime_Semrelease 把阻塞在 sema 上的 main goroutine 唤醒，它才会继续往下执行（退出程序）。
+
+
+![alt text](images/demo_03_03.png)
+![alt text](images/demo_03_04.png)
+![alt text](images/demo_03_05.png)
+
+
+
+#### 总结
+- WaitGroup 实现了一组协程等待另外一组协程
+- 等待的协程（ 也就是调用了 waitGroup.Wait() 的协程 ）被放入Sema等待队列，并且记录等待的个数counter
+- 当等待协程计数counter归零的时候，调度器会唤醒所有在sema中等待的协程
+
+
+### sync.Once
+- sync.Once实现了一段代码只执行一次
+- 使用标志位 + mutex实现了并发冲突的优化
+
+- 先判断标志位是否已经改值
+- 如果还有更改，尝试获取锁
+- 获取到锁的协程执行业务，改标志位的值，然后解锁
+- 由于要求代码只需要执行一次，因此当等待的协程被唤醒，然后直接返回
