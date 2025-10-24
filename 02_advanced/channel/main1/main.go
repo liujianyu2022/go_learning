@@ -5,10 +5,12 @@ import (
 	"time"
 )
 
+// 无缓冲的管道，必须要有 同时存在 的发送方和接收方，才能完成一次传递。不然就会阻塞
 func demo1(){
-	var channel1 chan string = make(chan string)    // 无缓冲的管道，必须要有 同时存在 的发送方和接收方，才能完成一次传递。不然就会阻塞
-	var channel2 chan string = make(chan string, 0) // 无缓冲的管道，必须要有 同时存在 的发送方和接收方，才能完成一次传递。不然就会阻塞
+	var channel1 chan string = make(chan string)    
+	var channel2 chan string = make(chan string, 0)
 
+	// 由于没有接收方，下面两行会阻塞程序执行
 	channel1 <- "a"
 	channel2 <- "b"
 
@@ -21,6 +23,8 @@ func demo1(){
 func demo2(){
 	channel := make(chan string)
 
+	// 启动一个协程作为接收方
+	// 由于同时存在发送方和接收方，因此不会阻塞
 	go func(){
 		fmt.Println("demo2：有消费者等待，", <- channel)
 	}()
@@ -28,14 +32,16 @@ func demo2(){
 	channel <- "demo2"
 }
 
+// 有缓冲的管道，发送方在缓冲区没满时不会阻塞，接收方在缓冲区没空时不会阻塞。
 func demo3(){
-	channel := make(chan int, 2) 		// 有缓冲的管道，发送方在缓冲区没满时不会阻塞，接收方在缓冲区没空时不会阻塞。
+	channel := make(chan int, 2) 		
 
 	channel <- 0
 	channel <- 1			// 前面两个进入缓冲区，程序不阻塞
 
 	fmt.Println("demo3：有缓冲的管道，在缓冲区满之前是不会阻塞的")
 
+	// 缓冲区满了，下面这行会阻塞程序执行
 	channel <- 2
 	fmt.Println("demo3：有缓冲的管道，缓冲区满之后会阻塞，因此这里无法输出")
 }
