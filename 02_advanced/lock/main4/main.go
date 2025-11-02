@@ -5,6 +5,8 @@ import (
 	"sync"
 )
 
+// sync.Once 保证某段代码只执行一次
+
 func test(pointer *int) {
 	*pointer += 1
 }
@@ -19,7 +21,7 @@ func main() {
 	for i := 0; i < 3; i++ {
 		go func(){
 			defer waitGroup.Done()
-			once.Do(func() {test(&num)})
+			once.Do(func() {test(&num)})			// 保证 test 函数只会被执行一次
 		}()
 	}
 

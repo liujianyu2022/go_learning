@@ -6,7 +6,7 @@ import (
 )
 
 type Person struct {
-	mutex sync.RWMutex
+	mutex sync.RWMutex		// 读写锁，包含RLock、RUnlock、Lock和Unlock方法，当读多写少，希望读取可以并发时使用
 	salary uint
 	level uint
 }
