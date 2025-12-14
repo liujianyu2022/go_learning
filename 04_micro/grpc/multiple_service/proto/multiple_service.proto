@@ -1,0 +1,22 @@
+syntax = "proto3";
+package mutiple_service;
+
+option go_package = "./;mutiple_service";
+
+service VideoService {
+    rpc GetVideo (Request) returns (Response) {}
+}
+
+service OrderService {
+    rpc GetOrder (Request) returns (Response) {}
+}
+
+message Request {
+    string name = 1;
+}
+
+message Response {
+    string name = 1;
+}
+
+// protoc --go_out=. --go-grpc_out=. multiple_service.proto

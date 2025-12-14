@@ -1,0 +1,11 @@
+syntax = "proto3";
+package multiple_proto;
+
+// option go_package = "./;user";
+option go_package = "go_learning/04_micro/grpc/multiple_proto/proto/user;user";
+
+import "basic/basic.proto";
+
+service UserService {
+    rpc GetUser (BasicRequest) returns (BasicResponse) {}
+}

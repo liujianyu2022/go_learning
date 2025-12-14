@@ -1,0 +1,23 @@
+syntax = "proto3";
+package type_proto;
+
+option go_package = "./;type_proto";
+
+service TypeService {
+    rpc GetType (TypeRequest) returns (TypeResponse) {}
+}
+
+// 各种基本类型
+message TypeRequest {
+    double a1 = 1;
+    float a2 = 2;
+    int32 a3 = 3;
+    int64 a4 = 4;
+    uint32 a5 = 5;
+    uint64 a6 = 6;
+    bool a7 = 7;
+    string a8 = 8;
+    bytes a9 = 9;       // []byte
+}
+
+message TypeResponse {}

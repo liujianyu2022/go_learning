@@ -1,0 +1,19 @@
+syntax = "proto3";
+package multiple_proto;
+
+// option go_package = "./;basic";
+option go_package = "go_learning/04_micro/grpc/multiple_proto/proto/basic;basic";
+
+import "google/protobuf/any.proto";
+
+message BasicRequest {
+    string name = 1;
+}
+
+message BasicResponse {
+    int32 code = 1;
+    google.protobuf.Any data = 2;
+    string message = 3;
+}
+
+// protoc --go_out=. --go-grpc_out=. .\basic.proto

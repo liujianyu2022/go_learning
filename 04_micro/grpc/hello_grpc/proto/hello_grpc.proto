@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package hello_grpc;
+
+// 第一个参数指定生成的 Go 代码的包路径，第二个参数指定 Go代码的包名
+// 这里表示生成的代码放在当前目录下，包名为 hello_grpc
+option go_package = "./;hello_grpc";
+
+service HelloService {
+    rpc SayHello (HelloRequest) returns (HelloResponse) {}
+}
+
+message HelloRequest {
+    string name = 1;
+    string message = 2;
+}
+
+message HelloResponse {
+    string name = 1;
+    string message = 2;
+}
